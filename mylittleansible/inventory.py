@@ -26,6 +26,6 @@ class Inventory:
         with open(inventory_file, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f)
 
-        hosts = data.get("hosts", {}) if data else {}
+        hosts = data if isinstance(data, dict) else {}
 
         return cls(inventory_file=inventory_file, hosts=hosts)

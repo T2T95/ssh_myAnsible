@@ -1,0 +1,23 @@
+---
+- module: ping
+  params: {}
+
+- module: command
+  params:
+    cmd: "echo 'SSH Connection Successful!'"
+
+- module: command
+  params:
+    cmd: "hostname"
+
+- module: command
+  params:
+    cmd: "whoami"
+
+- module: command
+  params:
+    cmd: "pwd"
+
+- module: command
+  params:
+    cmd: "uname -a"

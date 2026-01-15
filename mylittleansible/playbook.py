@@ -160,8 +160,12 @@ class Playbook:
 
                         if task_result:
                             result.ok += 1
-                            result.changed += 1
-                            logger.info(f"[{module}] OK [CHANGED]")
+                            # ✅ FIX: Only count as 'changed' for modules that modify the system
+                            if module in ["apt", "service", "copy", "template", "sysctl"]:
+                                result.changed += 1
+                                logger.info(f"[{module}] OK [CHANGED]")
+                            else:
+                                logger.info(f"[{module}] OK")
                         else:
                             result.failed += 1
                             logger.error(f"[{module}] FAILED")
@@ -190,14 +194,17 @@ class Playbook:
 
         Args:
             ssh_manager: SSHManager instance for the host
-            module: Module name (apt, command, copy, template, service, sysctl)
+            module: Module name (apt, command, copy, template, service, sysctl, ping)
             params: Module parameters
 
         Returns:
             True if successful, False otherwise
         """
         try:
-            if module == "apt":
+            if module == "ping":
+                return self._execute_ping(ssh_manager)
+
+            elif module == "apt":
                 return self._execute_apt(ssh_manager, params)
 
             elif module == "command":
@@ -221,6 +228,24 @@ class Playbook:
 
         except Exception as e:
             logger.error(f"Task execution failed: {str(e)}")
+            return False
+
+    def _execute_ping(self, ssh_manager: SSHManager) -> bool:
+        """Execute ping module (SSH connectivity test)."""
+        from mylittleansible.modules.ping import PingModule
+
+        try:
+            ping_module = PingModule(params={})
+            result = ping_module.execute(ssh_manager.client)
+
+            if result.is_success:
+                logger.info("Ping successful: pong")
+                return True
+            else:
+                logger.error(f"Ping failed: {result.stderr}")
+                return False
+        except Exception as e:
+            logger.error(f"Ping error: {str(e)}")
             return False
 
     def _execute_apt(self, ssh_manager: SSHManager,
@@ -289,7 +314,7 @@ class Playbook:
             return False
 
         logger.info(f"Copying {src} to {dest}")
-        
+
         try:
             sftp = ssh_manager.open_sftp()
             sftp.put(src, dest)
@@ -304,7 +329,7 @@ class Playbook:
                           params: Dict[str, Any]) -> bool:
         """Execute template module (Jinja2 template rendering)."""
         from jinja2 import Template
-        
+
         src = params.get('src')
         dest = params.get('dest')
 
@@ -323,20 +348,20 @@ class Playbook:
 
         logger.info(
             f"Rendering template {src} with variables: {template_vars}")
-        
+
         try:
             with open(src, 'r', encoding='utf-8') as f:
                 template_content = f.read()
-            
+
             template = Template(template_content)
             rendered = template.render(template_vars)
-            
+
             # Write rendered content to remote file
             stdin, stdout, stderr = ssh_manager.exec_command(
                 f"cat > {dest} << 'TEMPLATE_EOF'\n{rendered}\nTEMPLATE_EOF"
             )
             exit_code = stdout.channel.recv_exit_status()
-            
+
             return exit_code == 0
         except Exception as e:
             logger.error(f"Template rendering failed: {str(e)}")
