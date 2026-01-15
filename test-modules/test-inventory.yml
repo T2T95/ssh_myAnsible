@@ -1,0 +1,4 @@
+hosts:
+  localhost:
+    ssh_address: localhost
+    ssh_port: 22

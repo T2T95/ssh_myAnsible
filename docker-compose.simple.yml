@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  target1:
+    image: ubuntu:22.04
+    container_name: mla-target1
+    hostname: webserver
+    networks:
+      mla-net:
+        ipv4_address: 172.20.0.22
+    command: >
+      bash -c "
+        apt-get update &&
+        apt-get install -y openssh-server sudo nginx &&
+        mkdir -p /var/run/sshd /var/www/public &&
+        echo 'testuser:testpass' | chpasswd &&
+        useradd -m testuser &&
+        echo 'testuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers &&
+        sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config &&
+        sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
+        service ssh start &&
+        tail -f /dev/null
+      "
+  target2:
+    image: ubuntu:22.04
+    container_name: mla-target2
+    hostname: bastion
+    networks:
+      mla-net:
+        ipv4_address: 172.20.0.24
+    command: >
+      bash -c "
+        apt-get update &&
+        apt-get install -y openssh-server sudo &&
+        mkdir -p /var/run/sshd &&
+        echo 'testuser:testpass' | chpasswd &&
+        useradd -m testuser &&
+        echo 'testuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers &&
+        sed -i 's/#PermitRootLogin.*/PermitRootLogin yes/' /etc/ssh/sshd_config &&
+        sed -i 's/#PasswordAuthentication.*/PasswordAuthentication yes/' /etc/ssh/sshd_config &&
+        service ssh start &&
+        tail -f /dev/null
+      "
+networks:
+  mla-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24

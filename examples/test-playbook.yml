@@ -1,0 +1,8 @@
+- module: apt
+  params:
+    name: curl
+    state: present
+
+- module: command
+  params:
+    cmd: echo "MyLittleAnsible Test"

@@ -1,0 +1,11 @@
+- module: command
+  params:
+    cmd: echo "Hello MyLittleAnsible"
+
+- module: command
+  params:
+    cmd: whoami
+
+- module: command
+  params:
+    cmd: date

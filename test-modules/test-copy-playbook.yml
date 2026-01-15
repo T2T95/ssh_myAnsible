@@ -1,0 +1,11 @@
+- module: copy
+  params:
+    src: ./test-file.txt
+    dest: /tmp/test-file.txt
+    backup: false
+
+- module: copy
+  params:
+    src: ./test-folder
+    dest: /tmp/test-folder
+    backup: true

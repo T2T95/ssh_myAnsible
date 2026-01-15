@@ -1,0 +1,15 @@
+- module: template
+  params:
+    src: ./nginx.conf.j2
+    dest: /etc/nginx/sites-enabled/default
+    vars:
+      listen_port: 8080
+      server_name: "example.com"
+
+- module: template
+  params:
+    src: ./nginx.conf.j2
+    dest: /etc/nginx/sites-enabled/api.conf
+    vars:
+      listen_port: 8443
+      server_name: "api.example.com"

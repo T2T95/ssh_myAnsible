@@ -1,0 +1,6 @@
+hosts:
+  docker-real:
+    ssh_address: localhost
+    ssh_port: 3333
+    ssh_user: ubuntu
+    ssh_password: "ubuntu"

@@ -1,0 +1,11 @@
+hosts:
+  webserver:
+    ssh_address: 172.20.0.22
+    ssh_port: 22
+    ssh_user: testuser
+    ssh_password: testpass
+  bastion:
+    ssh_address: 172.20.0.24
+    ssh_port: 22
+    ssh_user: testuser
+    ssh_password: testpass

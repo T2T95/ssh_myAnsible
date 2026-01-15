@@ -1,0 +1,7 @@
+---
+hosts:
+  ubuntu24:
+    host: 172.20.10.3
+    user: toto
+    port: 22
+    password: "toto"

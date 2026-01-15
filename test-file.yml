@@ -1,0 +1,5 @@
+---
+- hosts: all
+  tasks:
+    - name: Create file
+      shell: echo "Test from Ansible" > /tmp/test.txt

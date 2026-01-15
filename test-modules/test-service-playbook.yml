@@ -1,0 +1,19 @@
+- module: service
+  params:
+    name: nginx
+    state: started
+
+- module: service
+  params:
+    name: ssh
+    state: enabled
+
+- module: service
+  params:
+    name: apache2
+    state: stopped
+
+- module: service
+  params:
+    name: nginx
+    state: restarted

@@ -1,0 +1,17 @@
+- module: sysctl
+  params:
+    attribute: net.core.somaxconn
+    value: 8192
+    permanent: true
+
+- module: sysctl
+  params:
+    attribute: net.ipv4.ip_forward
+    value: 1
+    permanent: false
+
+- module: sysctl
+  params:
+    attribute: net.ipv4.tcp_fin_timeout
+    value: 30
+    permanent: true

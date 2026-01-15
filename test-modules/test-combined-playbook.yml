@@ -1,0 +1,37 @@
+- module: apt
+  params:
+    name: curl
+    state: present
+
+- module: command
+  params:
+    cmd: echo "Starting configuration"
+
+- module: copy
+  params:
+    src: ./test-file.txt
+    dest: /tmp/combined-test.txt
+    backup: false
+
+- module: template
+  params:
+    src: ./nginx.conf.j2
+    dest: /tmp/nginx-combined.conf
+    vars:
+      listen_port: 9090
+      server_name: "test.local"
+
+- module: service
+  params:
+    name: nginx
+    state: enabled
+
+- module: sysctl
+  params:
+    attribute: net.core.netdev_max_backlog
+    value: 5000
+    permanent: true
+
+- module: command
+  params:
+    cmd: echo "Configuration complete"

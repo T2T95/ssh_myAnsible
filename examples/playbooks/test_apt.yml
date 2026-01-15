@@ -1,0 +1,9 @@
+- module: apt
+  params:
+    name: nginx
+    state: present
+
+#- module: apt
+#  params:
+#    name: curl
+#    state: absent 
