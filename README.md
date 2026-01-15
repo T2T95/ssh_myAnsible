@@ -334,42 +334,45 @@ server {
 EOF
 ```
 
-### 🧪 Exécuter chaque test
+### 🧪 Exécuter les tests unitaires
 
 ```bash
-cd ~/my-little-ansible/test-modules
+# Installer pytest et pytest-cov
+pip install pytest pytest-cov
 
-# TEST 1: Module APT
-echo "🧪 TEST APT MODULE"
-mla -f test-apt-playbook.yml -i test-inventory.yml --dry-run -vv
+# Exécuter tous les tests
+pytest tests/ -v
 
-# TEST 2: Module COMMAND
-echo "🧪 TEST COMMAND MODULE"
-mla -f test-command-playbook.yml -i test-inventory.yml --dry-run -vv
+# Voir les résultats
+============================================================= test session starts =============================================================
+platform linux -- Python 3.12.3, pytest-9.0.2, pluggy-1.6.0
+rootdir: /mnt/c/ETNA/DebugSSH
+plugins: cov-7.0.0, mock-3.15.1
+collected 25 items
 
-# TEST 3: Module COPY
-echo "🧪 TEST COPY MODULE"
-mla -f test-copy-playbook.yml -i test-inventory.yml --dry-run -vv
+tests/test_inventory.py ...                                                                             [ 12%]
+tests/test_playbook.py ......                                                                          [ 36%]
+tests/test_ssh_manager.py ......                                                                       [ 60%]
+tests/test_utils.py ..........                                                                         [100%]
 
-# TEST 4: Module TEMPLATE
-echo "🧪 TEST TEMPLATE MODULE"
-mla -f test-template-playbook.yml -i test-inventory.yml --dry-run -vv
+=============================================================== tests coverage ================================================================
+Coverage HTML written to dir htmlcov
+============================================================= 25 passed in 2.18s ==============================================================
+```
 
-# TEST 5: Module SERVICE
-echo "🧪 TEST SERVICE MODULE"
-mla -f test-service-playbook.yml -i test-inventory.yml --dry-run -vv
+### 📊 Générer et consulter le rapport de couverture
 
-# TEST 6: Module SYSCTL
-echo "🧪 TEST SYSCTL MODULE"
-mla -f test-sysctl-playbook.yml -i test-inventory.yml --dry-run -vv
+```bash
+# Générer le rapport HTML de couverture
+pytest tests/ --cov=mylittleansible --cov-report=html
 
-# TEST 7: TOUS LES MODULES
-echo "🧪 TEST COMBINED - ALL MODULES"
-mla -f test-combined-playbook.yml -i test-inventory.yml --dry-run -vv
+# Ouvrir le rapport dans le navigateur
+firefox htmlcov/index.html    # Linux
+open htmlcov/index.html       # Mac
+start htmlcov/index.html      # Windows
 
-# TEST 8: MODE DEBUG
-echo "🧪 TEST AVEC DEBUG FLAG"
-mla -f test-apt-playbook.yml -i test-inventory.yml --dry-run --debug
+# Voir la couverture en terminal
+pytest tests/ --cov=mylittleansible --cov-report=term-missing
 ```
 
 ### ✅ Résultats attendus
@@ -398,17 +401,20 @@ mla -f test-apt-playbook.yml -i test-inventory.yml --dry-run
 # Devrait voir: Playbook Summary: ok=2 (inchangé)
 ```
 
-### 🧬 Exécuter les tests unitaires
+### 🧬 Exécuter les tests unitaires avec couverture
 
 ```bash
-# Installer pytest
-pip install pytest pytest-cov
+# Tous les tests avec couverture
+pytest tests/ -v --cov=mylittleansible --cov-report=html
 
-# Exécuter tous les tests
-pytest tests/ -v
+# Tests spécifiques
+pytest tests/test_inventory.py -v
+pytest tests/test_playbook.py -v
+pytest tests/test_ssh_manager.py -v
+pytest tests/test_utils.py -v
 
-# Voir la couverture
-pytest tests/ --cov=mylittleansible
+# Couverture détaillée par fichier
+pytest tests/ --cov=mylittleansible --cov-report=term-missing
 ```
 
 ---
@@ -688,7 +694,8 @@ pip install -r requirements.txt
 - ✅ Garantie d'idempotence
 - ✅ Logging professionnel
 - ✅ Conforme 100% PEP8
-- ✅ Suite de tests complète
+- ✅ Suite de tests complète (25 tests)
+- ✅ Rapport de couverture HTML
 
 ---
 
@@ -820,4 +827,4 @@ mla -f playbook.yml -i inventory.yml
 
 **Dernière mise à jour:** 15 janvier 2026  
 **Version:** 1.0.0  
-**Status:** ✅ Prêt pour la production
+**Status:** ✅ Prêt pour la production et répond à tous les besoins du sujet TIC-NUX4 / MyLittleAnsible
